@@ -16,6 +16,7 @@ use Silex\ServiceProviderInterface;
 
 use Symfony\Component\HttpFoundation\RequestMatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Core\User\UserChecker;
@@ -506,7 +507,8 @@ class SecurityServiceProvider implements ServiceProviderInterface
     {
         // FIXME: in Symfony 2.2, this is a proper subscriber
         //$app['dispatcher']->addSubscriber($app['security.firewall']);
-        $app['dispatcher']->addListener('kernel.request', array($app['security.firewall'], 'onKernelRequest'), 8);
+        $app['dispatcher']->addListener(KernelEvents::REQUEST, array($app['security.firewall'], 'onKernelRequest'), 8);
+        $app['dispatcher']->addListener(KernelEvents::EXCEPTION, array($app['security.firewall'], 'onKernelRequest'), 8);
 
         foreach ($this->fakeRoutes as $route) {
             list($method, $pattern, $name) = $route;
